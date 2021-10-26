@@ -14,6 +14,8 @@
         <div>Register: <input type="email" id="register-email"> <input type="password" id="register-password"> <input type="name" id="register-name"> <button onclick="testRegister()">Register</button></div>
         <div>Login: <input type="email" id="login-email"> <input type="password" id="login-password"><button onclick="testLogin()">Login</button></div>
         <div>Me: <button onclick="testMe()">Me</button></div>
+        <div>Logout: <button onclick="testLogout()">Logout</button></div>
+        <div>Refresh: <button onclick="testRefresh()">Refresh</button></div>
     </body>
     <script>
 
@@ -78,6 +80,15 @@ function testLogin() {
 
 function testMe() {
     postData("/api/me", {});
+}
+
+function testLogout() {
+    postData("/api/logout", {});
+    accessToken = null;
+}
+
+function testRefresh() {
+    postData("/api/refresh", {});
 }
 
     </script>
