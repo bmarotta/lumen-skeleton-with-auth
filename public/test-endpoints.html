@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <style>
+            body, button, input {
+                font-family: sans-serif;
+                font-size: 18px;
+                margin: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Test Endpoints</h1>
+        <pre id="results"></pre>
+        <div>Register: <input type="email" id="register-email"> <input type="password" id="register-password"> <input type="name" id="register-name"> <button onclick="testRegister()">Register</button></div>
+        <div>Login: <input type="email" id="login-email"> <input type="password" id="login-password"><button onclick="testLogin()">Login</button></div>
+        <div>Me: <button onclick="testMe()">Me</button></div>
+    </body>
+    <script>
+
+let accessToken;
+
+// Example POST method implementation:
+async function postData(url = '', data = {}) {
+  const options = {
+    method: 'POST', 
+    mode: 'cors', 
+    cache: 'no-cache', 
+    credentials: 'same-origin', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow', 
+    referrerPolicy: 'no-referrer', 
+    body: JSON.stringify(data) 
+  };
+  if (accessToken) {
+      options.headers['Authorization'] = "Bearer " + accessToken;
+  }
+  // Default options are marked with *
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    try {
+        return response.json()
+            .then((value) => results.innerHTML = JSON.stringify(value))
+            .catch((error) => results.innerHTML =  "ERROR: " + response.status + ", " + response.statusText);
+    }
+    catch {
+        results.innerHTML =  "ERROR: " + response.status + ", " + response.statusText;
+        return response.statusText;
+    }    
+  } else {
+        return response.json().then((value) => {
+            if (value.access_token) {
+                accessToken = value.access_token;
+            }
+            results.innerHTML = JSON.stringify(value)
+        });
+  }
+  
+}
+
+const results = document.getElementById("results");
+
+function testRegister() {
+    postData("/api/register", {
+            email: document.getElementById("register-email").value, 
+            password: document.getElementById("register-password").value, 
+            name: document.getElementById("register-name").value
+        });
+}
+
+function testLogin() {
+    postData("/api/login", {
+            email: document.getElementById("login-email").value, 
+            password: document.getElementById("login-password").value
+        });
+}
+
+function testMe() {
+    postData("/api/me", {});
+}
+
+    </script>
+</html>
