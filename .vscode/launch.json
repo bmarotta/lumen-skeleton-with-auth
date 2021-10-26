@@ -43,6 +43,21 @@
                 "uriFormat": "http://localhost:%s",
                 "action": "openExternally"
             }
+        },
+        {
+            "name": "Launch phpunit",
+            "type": "php",
+            "request": "launch",
+            "program": "${workspaceRoot}\\vendor\\phpunit\\phpunit\\phpunit",
+            "cwd": "${workspaceRoot}",
+            "port": 0,
+            "runtimeArgs": [
+                "-dxdebug.start_with_request=yes"
+            ],
+            "env": {
+                "XDEBUG_MODE": "debug,develop",
+                "XDEBUG_CONFIG": "client_port=${port}"
+            }
         }
     ]
 }
