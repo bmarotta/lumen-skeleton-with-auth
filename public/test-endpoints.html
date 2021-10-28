@@ -64,7 +64,7 @@ async function postData(url = '', data = {}) {
 const results = document.getElementById("results");
 
 function testRegister() {
-    postData("/api/register", {
+    postData("/api/auth/register", {
             email: document.getElementById("register-email").value, 
             password: document.getElementById("register-password").value, 
             name: document.getElementById("register-name").value
@@ -72,23 +72,23 @@ function testRegister() {
 }
 
 function testLogin() {
-    postData("/api/login", {
+    postData("/api/auth/login", {
             email: document.getElementById("login-email").value, 
             password: document.getElementById("login-password").value
         });
 }
 
 function testMe() {
-    postData("/api/me", {});
+    postData("/api/auth/me", {});
 }
 
 function testLogout() {
-    postData("/api/logout", {});
+    postData("/api/auth/logout", {});
     accessToken = null;
 }
 
 function testRefresh() {
-    postData("/api/refresh", {});
+    postData("/api/auth/refresh", {});
 }
 
     </script>

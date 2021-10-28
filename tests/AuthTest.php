@@ -1,17 +1,14 @@
 <?php
 
-use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
-use Illuminate\Support\Facades\App;
-
-class ExampleTest extends TestCase
+class AuthTest extends TestCase
 {
     use DatabaseTransactions;
 
     public function testUserCannotLogin()
     {
-        $response = $this->post('/api/login', [
+        $response = $this->post('/api/auth/login', [
             'email' => 'a@a.com',
             'password' => '12345',
         ]);
@@ -21,7 +18,7 @@ class ExampleTest extends TestCase
 
     public function testUserCannotRegisterWithoutPassword()
     {
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '',
             'name' => 'Test'
@@ -32,7 +29,7 @@ class ExampleTest extends TestCase
 
     public function testUserCanRegister()
     {
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '12345',
             'name' => 'Test'
@@ -46,7 +43,7 @@ class ExampleTest extends TestCase
      */
     public function testUserCanLoginAfterRegistering()
     {
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '12345',
             'name' => 'Test'
@@ -54,7 +51,7 @@ class ExampleTest extends TestCase
 
         $response->assertResponseStatus(200);
 
-        $response = $this->post('/api/login', [
+        $response = $this->post('/api/auth/login', [
             'email' => 'a@a.com',
             'password' => '12345'
         ]);
@@ -64,7 +61,7 @@ class ExampleTest extends TestCase
 
     public function testUserCannotLoginWithWrongPassword()
     {
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '12345',
             'name' => 'Test'
@@ -72,7 +69,7 @@ class ExampleTest extends TestCase
 
         $response->assertResponseStatus(200);
 
-        $response = $this->post('/api/login', [
+        $response = $this->post('/api/auth/login', [
             'email' => 'a@a.com',
             'password' => '54321'
         ]);
@@ -82,14 +79,14 @@ class ExampleTest extends TestCase
 
     public function testUserCannotGetMeWithoutRegistering()
     {
-        $response = $this->post('/api/me', []);
+        $response = $this->post('/api/auth/me', []);
 
         $response->assertResponseStatus(401);
     }
 
     public function testUserCanGetMe()
     {
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '12345',
             'name' => 'Test'
@@ -99,7 +96,7 @@ class ExampleTest extends TestCase
 
         $accessToken = json_decode($response->response->getContent(), true)['access_token'];
 
-        $response = $this->post('/api/me', [], ["authorization" => "Bearer " . $accessToken]);
+        $response = $this->post('/api/auth/me', [], ["authorization" => "Bearer " . $accessToken]);
 
         $response->assertResponseStatus(200);
     }
@@ -107,7 +104,7 @@ class ExampleTest extends TestCase
     public function testUserFullFlow()
     {
         // Register
-        $response = $this->post('/api/register', [
+        $response = $this->post('/api/auth/register', [
             'email' => 'a@a.com',
             'password' => '12345',
             'name' => 'Test'
@@ -115,7 +112,7 @@ class ExampleTest extends TestCase
         $response->assertResponseStatus(200);
 
         // Login
-        $response = $this->post('/api/login', [
+        $response = $this->post('/api/auth/login', [
             'email' => 'a@a.com',
             'password' => '12345'
         ]);
@@ -123,20 +120,20 @@ class ExampleTest extends TestCase
         $accessToken = json_decode($response->response->getContent(), true)['access_token'];
 
         // Get me
-        $response = $this->post('/api/me', [], ["authorization" => "Bearer " . $accessToken]);
+        $response = $this->post('/api/auth/me', [], ["authorization" => "Bearer " . $accessToken]);
         $response->assertResponseStatus(200);
 
         // Refresh token 
-        $response = $this->post('/api/refresh', [], ["authorization" => "Bearer " . $accessToken]);
+        $response = $this->post('/api/auth/refresh', [], ["authorization" => "Bearer " . $accessToken]);
         $response->assertResponseStatus(200);
         $accessToken = json_decode($response->response->getContent(), true)['access_token'];
 
         // Get me (with the new token)
-        $response = $this->post('/api/me', [], ["authorization" => "Bearer " . $accessToken]);
+        $response = $this->post('/api/auth/me', [], ["authorization" => "Bearer " . $accessToken]);
         $response->assertResponseStatus(200);
 
         // Logout
-        $response = $this->post('/api/logout', [], ["authorization" => "Bearer " . $accessToken]);
+        $response = $this->post('/api/auth/logout', [], ["authorization" => "Bearer " . $accessToken]);
         $response->assertResponseStatus(200);
     }
 }
