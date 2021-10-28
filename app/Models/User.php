@@ -32,14 +32,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
-    /**
-     * Get the comments for the blog post.
-     */
-    public function tokens()
-    {
-        return $this->hasMany(UserToken::class);
-    }
-
     /** JWT TOKEN **/
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
